@@ -74,6 +74,10 @@ class DQNAgent:
         batch = random.sample(self.memory, BATCH_SIZE)
         state_batch, action_batch, reward_batch, next_state_batch, done_batch = zip(*batch)
         
+        # speed optimization: convert to numpy array
+        state_batch = np.array(state_batch)
+        next_state_batch = np.array(next_state_batch)
+
         state_batch = torch.FloatTensor(state_batch).to(self.device)
         action_batch = torch.LongTensor(action_batch).to(self.device)
         reward_batch = torch.FloatTensor(reward_batch).to(self.device)
@@ -134,7 +138,7 @@ def train_dqn(episodes, render=False):
 print(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
 
 # Train the agent
-trained_agent = train_dqn(episodes=1000)
+# trained_agent = train_dqn(episodes=10)
 
-# Save the trained model
-torch.save(trained_agent.model.state_dict(), 'space_invaders_dqn_model.pth')
+# # Save the trained model
+# torch.save(trained_agent.model.state_dict(), 'space_invaders_dqn_model.pth')
