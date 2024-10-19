@@ -10,10 +10,10 @@ import random
 GAMMA = 0.99
 LEARNING_RATE = 0.001
 MEMORY_SIZE = 100000
-BATCH_SIZE = 32
+BATCH_SIZE = 64
 EXPLORATION_MAX = 1.0
 EXPLORATION_MIN = 0.01
-EXPLORATION_DECAY = 0.995
+EXPLORATION_DECAY = 0.9995
 
 class DQN(nn.Module):
     def __init__(self, input_shape, n_actions):
@@ -138,7 +138,7 @@ def train_dqn(episodes, render=False):
 print(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
 
 # Train the agent
-# trained_agent = train_dqn(episodes=10)
+trained_agent = train_dqn(episodes=100)
 
-# # Save the trained model
-# torch.save(trained_agent.model.state_dict(), 'space_invaders_dqn_model.pth')
+# Save the trained model
+torch.save(trained_agent.model.state_dict(), './space_invaders_dqn_model.pth')
