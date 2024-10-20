@@ -1,36 +1,28 @@
 import gymnasium as gym
-import torch
+from stable_baselines3 import DQN
 import numpy as np
-from train_v2 import DQN, preprocess_state  # Import the DQN class and preprocess_state function
 
-env = gym.make("SpaceInvaders-v4", render_mode="human")
 
-# Get the state shape and action size
-state_shape = (env.observation_space.shape[2], env.observation_space.shape[0], env.observation_space.shape[1])
-action_size = env.action_space.n
+game = "ALE/SpaceInvaders-v5"
+env = gym.make(game, render_mode="human")
 
-print(state_shape, action_size)
+model = DQN.load("spaceinvaders_dqn_model")
 
-# Initialize the DQN model
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = DQN(state_shape, action_size).to(device)
+episodes = 5
+for episode in range(episodes):
+    obs, _ = env.reset()
+    done = False
+    total_reward = 0
+    steps = 0
 
-# Load the saved model weights
-model.load_state_dict(torch.load('space_invaders_dqn_model.pth'))
-model.eval()  # Set the model to evaluation mode
+    while not done:
+        action, _ = model.predict(obs, deterministic=True)
+        obs, rewards, terminated, truncated, info = env.step(action)
+        done = terminated or truncated
+        total_reward += rewards
+        steps += 1
+        env.render()
+    
+    print(f"Episode {episode+1}/{episodes}, Total Reward: {total_reward}, Steps: {steps}")
 
-obs, _ = env.reset()
-obs = preprocess_state(obs)
-
-while True:
-    state = torch.FloatTensor(obs).unsqueeze(0).to(device)
-
-    with torch.no_grad():
-        q_values = model(state)
-        action = torch.argmax(q_values).item()
-
-    obs, reward, terminated, truncated, info = env.step(action)
-    obs = preprocess_state(obs)
-    if terminated or truncated:
-        obs = env.reset()
-        obs = preprocess_state(obs)
+env.close()
