@@ -4,3 +4,4 @@ stable-baselines3[extra]
 gymnasium[box2d]
 gymnasium[atari]
 scikit-image
+ray[rllib]
