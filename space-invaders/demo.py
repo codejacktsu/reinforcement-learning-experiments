@@ -1,6 +1,5 @@
 import gymnasium as gym
 from stable_baselines3 import DQN
-import numpy as np
 
 
 game = "ALE/SpaceInvaders-v5"
